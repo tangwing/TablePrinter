@@ -9,12 +9,13 @@ A header-only C++ library for better table display in console.
 3.Table header
 Ex:
 +-----------------------------------+
-|            Test Table             |
+¦            Test Table             ¦
 +-----------------------------------+
-|   |col1|Col2's header is very long|
-+---+----+--------------------------+
-|  0|   3|                       4.6|
-|  1|  hi|                         6|
+¦   ¦col1¦Col2's header is very long¦
++---+----+--------------------------¦
+¦  0¦   3¦                       4.6¦
++---+----+--------------------------¦
+¦  1¦  hi¦                         6¦
 +-----------------------------------+
 
 #Features to implement:

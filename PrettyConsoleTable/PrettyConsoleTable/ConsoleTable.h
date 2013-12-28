@@ -33,10 +33,7 @@ public:
 		HaveLineNumber(true),
 		HaveLineDiv(false),
 		HaveColNumber(false),
-		HaveColDiv(true),
-		//IsColWidthDynamic(true),
-		ColDivChar('|'),
-		LineDivChar('-')
+		HaveColDiv(true)
 	{
 		TableWidth = 0;
 		LineNumberColWidth = 3;
@@ -47,7 +44,7 @@ public:
 
 	///@brief Set a column header. We will decide the width of each column from its header text length.
 	///The other way to set the width of col: @see SetColWidth(int width, int colIndice)
-	ConsoleTable & SetColHeader(int colIndice, string header)
+	ConsoleTable & SetColHeader(unsigned int colIndice, string header)
 	{
 		ColHeaders[colIndice]=(header);
 		ColWidths[colIndice]=(header.size());
@@ -57,7 +54,7 @@ public:
 	///@brief Set the width of a specific column.
 	///@param width The new width value.
 	///@param colIndice The 0-based indice of the column to set, -1 as default standing for all columns
-	ConsoleTable & SetColWidth(int width, int colIndice = -1)
+	ConsoleTable & SetColWidth(unsigned int width, unsigned int colIndice = -1)
 	{
 		if(colIndice > -1 && ColWidths.size() > colIndice)
 		{
@@ -82,22 +79,29 @@ public:
 		
 		if( colIndice == 0)	//New line begins
 		{
-			cout<<endl<<ColDivChar<<setfill(' ');
+			cout<<endl<<CharColDiv<<setfill(' ');
 			if(HaveLineNumber)
-				cout<<setw(LineNumberColWidth)<< CurrentEleCount/ColCount <<ColDivChar;
+				cout<<setw(LineNumberColWidth)<< CurrentEleCount/ColCount <<CharColDiv;
 		}
-		cout<<setfill(' ')<<setw(ColWidths[colIndice])<<ele<<ColDivChar;
+		cout<<setfill(' ')<<setw(ColWidths[colIndice])<<ele<<CharColDiv;
 		CurrentEleCount ++;
 		
-		if( HaveLineDiv && CurrentEleCount%ColCount == 0 && CurrentEleCount != LineCount*ColCount)	//line ends, print divider
-		{
-			cout<<endl<<'+'<<setfill(LineDivChar);
-			if(HaveLineNumber) cout<<setw(LineNumberColWidth+1)<<'+';
-			for(int i = 0; i<ColCount; i++)
-				cout<<setw(ColWidths[i]+1)<<'+';
-		}
 		if(CurrentEleCount == LineCount*ColCount)	//Finish
-			cout<<endl<<'+'<<setfill(LineDivChar)<<setw(TableWidth-1)<<'+'<<endl;
+		{
+			cout<<endl<<CharDownLeft<<setfill(CharLineDiv);
+			if(HaveLineNumber) cout<<setw(LineNumberColWidth+1)<<CharDownMiddle;
+			for(int i = 0; i<ColCount-1; i++)
+				cout<<setw(ColWidths[i]+1)<<CharDownMiddle;
+			cout<<setw(ColWidths[ColCount-1]+1)<<CharDownRight;
+		}
+		else if( HaveLineDiv && CurrentEleCount%ColCount == 0 )	//line ends, print divider
+		{
+			cout<<endl<<CharMiddleLeft<<setfill(CharLineDiv);
+			if(HaveLineNumber) cout<<setw(LineNumberColWidth+1)<<CharMiddleMiddle;
+			for(int i = 0; i<ColCount-1; i++)
+				cout<<setw(ColWidths[i]+1)<<CharMiddleMiddle;
+			cout<<setw(ColWidths[ColCount-1]+1)<<CharMiddleRight;
+		}
 		return * this;
 	}
 
@@ -107,8 +111,6 @@ public:
 	ConsoleTable & SetHaveLineDiv(bool haveLineDiv){HaveLineDiv=(haveLineDiv); return *this;}
 	ConsoleTable & SetHaveColNumber(bool haveColNumber){HaveColNumber=(haveColNumber); return *this;}
 	ConsoleTable & SetHaveColDiv(bool haveColDiv){HaveColDiv=(haveColDiv); return *this;}
-	ConsoleTable & SetColDivChar(char colDiv){ColDivChar=colDiv; return *this;}
-	ConsoleTable & SetLineDivChar(char lineDiv){LineDivChar=lineDiv; return *this;}
 	
 
 //==================== Private zone ====================
@@ -125,8 +127,17 @@ private:
 	bool HaveColNumber;
 	bool HaveColDiv;
 	//bool IsColWidthDynamic;
-	char ColDivChar;
-	char LineDivChar;
+	static const char CharColDiv = (char)179;
+	static const char CharLineDiv = (char)196;
+	static const char CharUpLeft = (char)218;
+	static const char CharUpMiddle = (char)194;
+	static const char CharUpRight = (char)191;	
+	static const char CharDownLeft = (char)192;
+	static const char CharDownMiddle = (char)193;
+	static const char CharDownRight = (char)217;
+	static const char CharMiddleLeft = (char)195;
+	static const char CharMiddleMiddle = (char)197;
+	static const char CharMiddleRight = (char)180;
 
 	vector<string> ColHeaders;
 	vector<int> ColWidths;
@@ -143,20 +154,25 @@ private:
 
 		int titleMarge = (TableWidth - 2 - (int)Title.length())/2;
 		if(titleMarge<1)titleMarge = 1;
-		cout<<'+'<<setfill(LineDivChar)<<setw(TableWidth-2)<<LineDivChar<<'+'<<endl;
-		cout<<ColDivChar<<setfill(' ')<<setw(titleMarge)<<""<< Title <<setw(TableWidth - 1 - titleMarge - (int)Title.length())<<ColDivChar<<endl;
-		cout<<'+'<<setfill(LineDivChar)<<setw(TableWidth-1)<<'+';
+		cout<<CharUpLeft<<setfill(CharLineDiv)<<setw(TableWidth-2)<<CharLineDiv<<CharUpRight<<endl;
+		cout<<CharColDiv<<setfill(' ')<<setw(titleMarge)<<""<< Title <<setw(TableWidth - 1 - titleMarge - (int)Title.length())<<CharColDiv<<endl;
+		cout<<CharUpLeft<<setfill(CharLineDiv);
+		if(HaveLineNumber) cout<<setw(LineNumberColWidth+1)<<CharUpMiddle;
+		for(int i = 0; i<ColCount-1; i++)
+			cout<<setw(ColWidths[i]+1)<<CharUpMiddle;
+		cout<<setw(ColWidths[ColCount-1]+1)<<CharUpRight;
 		cout.fill(' ');
 		//Print column headers
-		cout<<endl<<ColDivChar;
-		if(HaveLineNumber) cout<<setw(LineNumberColWidth)<<""<<ColDivChar;
+		cout<<endl<<CharColDiv;
+		if(HaveLineNumber) cout<<setw(LineNumberColWidth)<<""<<CharColDiv;
 		for(int i = 0; i<ColCount; i++)
-			cout<<setw(ColWidths[i])<<ColHeaders[i]<<ColDivChar;
+			cout<<setw(ColWidths[i])<<ColHeaders[i]<<CharColDiv;
 		//Print the divider below the column headers 
-		cout<<endl<<'+'<<setfill(LineDivChar);
-		if(HaveLineNumber) cout<<setw(LineNumberColWidth+1)<<'+';
-		for(int i = 0; i<ColCount; i++)
-			cout<<setw(ColWidths[i]+1)<<'+';
+		cout<<endl<<CharMiddleLeft<<setfill(CharLineDiv);
+		if(HaveLineNumber) cout<<setw(LineNumberColWidth+1)<<CharMiddleMiddle;
+		for(int i = 0; i<ColCount-1; i++)
+			cout<<setw(ColWidths[i]+1)<<CharMiddleMiddle;
+		cout<<setw(ColWidths[ColCount-1]+1)<<CharMiddleRight;
 		cout.fill(' ');
 
 		return *this;
