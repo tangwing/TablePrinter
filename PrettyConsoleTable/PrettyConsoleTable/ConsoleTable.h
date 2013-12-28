@@ -13,6 +13,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <iomanip>
 #include <vector>
@@ -38,7 +39,13 @@ public:
 		TableWidth = 0;
 		LineNumberColWidth = 3;
 		ColWidthDefault = 5;
-		ColHeaders = vector<string>(ColCount, "");
+		ostringstream StringBuilder;
+		for(int i=0; i<ColCount; i++)
+		{
+			StringBuilder.str("");
+			StringBuilder<<i;
+			ColHeaders.push_back(StringBuilder.str());
+		}
 		ColWidths = vector<int>(ColCount, ColWidthDefault);
 	}
 
@@ -54,7 +61,7 @@ public:
 	///@brief Set the width of a specific column.
 	///@param width The new width value.
 	///@param colIndice The 0-based indice of the column to set, -1 as default standing for all columns
-	ConsoleTable & SetColWidth(unsigned int width, unsigned int colIndice = -1)
+	ConsoleTable & SetColWidth(unsigned int width, int colIndice = -1)
 	{
 		if(colIndice > -1 && ColWidths.size() > colIndice)
 		{
@@ -92,7 +99,7 @@ public:
 			if(HaveLineNumber) cout<<setw(LineNumberColWidth+1)<<CharDownMiddle;
 			for(int i = 0; i<ColCount-1; i++)
 				cout<<setw(ColWidths[i]+1)<<CharDownMiddle;
-			cout<<setw(ColWidths[ColCount-1]+1)<<CharDownRight;
+			cout<<setw(ColWidths[ColCount-1]+1)<<CharDownRight<<endl<<endl;
 		}
 		else if( HaveLineDiv && CurrentEleCount%ColCount == 0 )	//line ends, print divider
 		{
@@ -154,7 +161,7 @@ private:
 
 		int titleMarge = (TableWidth - 2 - (int)Title.length())/2;
 		if(titleMarge<1)titleMarge = 1;
-		cout<<CharUpLeft<<setfill(CharLineDiv)<<setw(TableWidth-2)<<CharLineDiv<<CharUpRight<<endl;
+		cout<<endl<<CharUpLeft<<setfill(CharLineDiv)<<setw(TableWidth-2)<<CharLineDiv<<CharUpRight<<endl;
 		cout<<CharColDiv<<setfill(' ')<<setw(titleMarge)<<""<< Title <<setw(TableWidth - 1 - titleMarge - (int)Title.length())<<CharColDiv<<endl;
 		cout<<CharUpLeft<<setfill(CharLineDiv);
 		if(HaveLineNumber) cout<<setw(LineNumberColWidth+1)<<CharUpMiddle;
