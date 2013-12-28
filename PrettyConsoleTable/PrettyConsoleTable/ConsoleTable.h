@@ -14,6 +14,7 @@
 #include <cassert>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <string>
 #include <iomanip>
 #include <vector>
@@ -26,7 +27,8 @@ class ConsoleTable
 {
 public:
 	///@brief The constructor which concern about the title and the structure of the table.
-	ConsoleTable(string title, int lineCount, int colCount):
+	///@param filename If not empty, ouput is redirected to a file.
+	ConsoleTable(string title, int lineCount, int colCount, string filename = ""):
 		Title(title),
 		LineCount(lineCount),
 		ColCount(colCount),
@@ -36,6 +38,17 @@ public:
 		HaveColNumber(false),
 		HaveColDiv(true)
 	{
+		if(filename.length()==0)
+		{
+			pOut = &cout;
+			EnableExtendedAsciiChar(true);
+		}
+		else 
+		{
+			pOut = new ofstream(filename, ofstream::app);
+			//It's a pity that normal files don't support extended ascii codes.
+			EnableExtendedAsciiChar(false);
+		}
 		TableWidth = 0;
 		LineNumberColWidth = 3;
 		ColWidthDefault = 5;
@@ -86,30 +99,62 @@ public:
 		
 		if( colIndice == 0)	//New line begins
 		{
-			cout<<endl<<CharColDiv<<setfill(' ');
+			*pOut<<endl<<CharColDiv<<setfill(' ');
 			if(HaveLineNumber)
-				cout<<setw(LineNumberColWidth)<< CurrentEleCount/ColCount <<CharColDiv;
+				*pOut<<setw(LineNumberColWidth)<< CurrentEleCount/ColCount <<CharColDiv;
 		}
-		cout<<setfill(' ')<<setw(ColWidths[colIndice])<<ele<<CharColDiv;
+		*pOut<<setfill(' ')<<setw(ColWidths[colIndice])<<ele<<CharColDiv;
 		CurrentEleCount ++;
 		
 		if(CurrentEleCount == LineCount*ColCount)	//Finish
 		{
-			cout<<endl<<CharDownLeft<<setfill(CharLineDiv);
-			if(HaveLineNumber) cout<<setw(LineNumberColWidth+1)<<CharDownMiddle;
+			*pOut<<endl<<CharDownLeft<<setfill(CharLineDiv);
+			if(HaveLineNumber) *pOut<<setw(LineNumberColWidth+1)<<CharDownMiddle;
 			for(int i = 0; i<ColCount-1; i++)
-				cout<<setw(ColWidths[i]+1)<<CharDownMiddle;
-			cout<<setw(ColWidths[ColCount-1]+1)<<CharDownRight<<endl<<endl;
+				*pOut<<setw(ColWidths[i]+1)<<CharDownMiddle;
+			*pOut<<setw(ColWidths[ColCount-1]+1)<<CharDownRight<<endl<<endl;
 		}
 		else if( HaveLineDiv && CurrentEleCount%ColCount == 0 )	//line ends, print divider
 		{
-			cout<<endl<<CharMiddleLeft<<setfill(CharLineDiv);
-			if(HaveLineNumber) cout<<setw(LineNumberColWidth+1)<<CharMiddleMiddle;
+			*pOut<<endl<<CharMiddleLeft<<setfill(CharLineDiv);
+			if(HaveLineNumber) *pOut<<setw(LineNumberColWidth+1)<<CharMiddleMiddle;
 			for(int i = 0; i<ColCount-1; i++)
-				cout<<setw(ColWidths[i]+1)<<CharMiddleMiddle;
-			cout<<setw(ColWidths[ColCount-1]+1)<<CharMiddleRight;
+				*pOut<<setw(ColWidths[i]+1)<<CharMiddleMiddle;
+			*pOut<<setw(ColWidths[ColCount-1]+1)<<CharMiddleRight;
 		}
 		return * this;
+	}
+
+	///@briet Turn to use plain-old Ascii chars
+	void EnableExtendedAsciiChar(bool enable)
+	{
+		if(enable)
+		{
+			CharColDiv = (char)179;
+			CharLineDiv = (char)196;
+			CharUpLeft = (char)218;
+			CharUpMiddle = (char)194;
+			CharUpRight = (char)191;	
+			CharDownLeft = (char)192;
+			CharDownMiddle = (char)193;
+			CharDownRight = (char)217;
+			CharMiddleLeft = (char)195;
+			CharMiddleMiddle = (char)197;
+			CharMiddleRight = (char)180;
+		}
+		else
+		{
+			CharColDiv = '|';
+			CharDownLeft = CharDownRight = CharMiddleLeft = CharMiddleMiddle = CharMiddleRight = CharUpLeft = CharUpMiddle = CharUpRight = '+';
+			CharLineDiv = CharDownMiddle = '-';
+		}
+
+	}
+
+	~ConsoleTable()
+	{
+		if(pOut != &cout)
+			delete pOut;
 	}
 
 //____________________ Getters & setters ____________________
@@ -122,6 +167,7 @@ public:
 
 //==================== Private zone ====================
 private:
+	ostream* pOut;
 	string Title;
 	int LineCount;
 	int ColCount;
@@ -134,17 +180,17 @@ private:
 	bool HaveColNumber;
 	bool HaveColDiv;
 	//bool IsColWidthDynamic;
-	static const char CharColDiv = (char)179;
-	static const char CharLineDiv = (char)196;
-	static const char CharUpLeft = (char)218;
-	static const char CharUpMiddle = (char)194;
-	static const char CharUpRight = (char)191;	
-	static const char CharDownLeft = (char)192;
-	static const char CharDownMiddle = (char)193;
-	static const char CharDownRight = (char)217;
-	static const char CharMiddleLeft = (char)195;
-	static const char CharMiddleMiddle = (char)197;
-	static const char CharMiddleRight = (char)180;
+	char CharColDiv ;
+	char CharLineDiv ;
+	char CharUpLeft ;
+	char CharUpMiddle ;
+	char CharUpRight ;
+	char CharDownLeft ;
+	char CharDownMiddle ;
+	char CharDownRight ;
+	char CharMiddleLeft ;
+	char CharMiddleMiddle ;
+	char CharMiddleRight ;
 
 	vector<string> ColHeaders;
 	vector<int> ColWidths;
@@ -161,26 +207,26 @@ private:
 
 		int titleMarge = (TableWidth - 2 - (int)Title.length())/2;
 		if(titleMarge<1)titleMarge = 1;
-		cout<<endl<<CharUpLeft<<setfill(CharLineDiv)<<setw(TableWidth-2)<<CharLineDiv<<CharUpRight<<endl;
-		cout<<CharColDiv<<setfill(' ')<<setw(titleMarge)<<""<< Title <<setw(TableWidth - 1 - titleMarge - (int)Title.length())<<CharColDiv<<endl;
-		cout<<CharUpLeft<<setfill(CharLineDiv);
-		if(HaveLineNumber) cout<<setw(LineNumberColWidth+1)<<CharUpMiddle;
+		*pOut<<endl<<CharUpLeft<<setfill(CharLineDiv)<<setw(TableWidth-2)<<CharLineDiv<<CharUpRight<<endl;
+		*pOut<<CharColDiv<<setfill(' ')<<setw(titleMarge)<<""<< Title <<setw(TableWidth - 1 - titleMarge - (int)Title.length())<<CharColDiv<<endl;
+		*pOut<<CharUpLeft<<setfill(CharLineDiv);
+		if(HaveLineNumber) *pOut<<setw(LineNumberColWidth+1)<<CharUpMiddle;
 		for(int i = 0; i<ColCount-1; i++)
-			cout<<setw(ColWidths[i]+1)<<CharUpMiddle;
-		cout<<setw(ColWidths[ColCount-1]+1)<<CharUpRight;
-		cout.fill(' ');
+			*pOut<<setw(ColWidths[i]+1)<<CharUpMiddle;
+		*pOut<<setw(ColWidths[ColCount-1]+1)<<CharUpRight;
+		(*pOut).fill(' ');
 		//Print column headers
-		cout<<endl<<CharColDiv;
-		if(HaveLineNumber) cout<<setw(LineNumberColWidth)<<""<<CharColDiv;
+		*pOut<<endl<<CharColDiv;
+		if(HaveLineNumber) *pOut<<setw(LineNumberColWidth)<<""<<CharColDiv;
 		for(int i = 0; i<ColCount; i++)
-			cout<<setw(ColWidths[i])<<ColHeaders[i]<<CharColDiv;
+			*pOut<<setw(ColWidths[i])<<ColHeaders[i]<<CharColDiv;
 		//Print the divider below the column headers 
-		cout<<endl<<CharMiddleLeft<<setfill(CharLineDiv);
-		if(HaveLineNumber) cout<<setw(LineNumberColWidth+1)<<CharMiddleMiddle;
+		*pOut<<endl<<CharMiddleLeft<<setfill(CharLineDiv);
+		if(HaveLineNumber) *pOut<<setw(LineNumberColWidth+1)<<CharMiddleMiddle;
 		for(int i = 0; i<ColCount-1; i++)
-			cout<<setw(ColWidths[i]+1)<<CharMiddleMiddle;
-		cout<<setw(ColWidths[ColCount-1]+1)<<CharMiddleRight;
-		cout.fill(' ');
+			*pOut<<setw(ColWidths[i]+1)<<CharMiddleMiddle;
+		*pOut<<setw(ColWidths[ColCount-1]+1)<<CharMiddleRight;
+		(*pOut).fill(' ');
 
 		return *this;
 	}
