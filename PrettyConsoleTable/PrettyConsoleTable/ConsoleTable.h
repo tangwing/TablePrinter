@@ -1,5 +1,5 @@
 //
-//  ConsoleTable v0.0
+//  ConsoleTable <https://github.com/tangwing/PrettyConsoleTable>
 //  A single-header only C++ library for easy (and pretty, for later versions) display 
 //  of tables in console applications.
 //
