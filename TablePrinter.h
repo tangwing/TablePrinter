@@ -1,5 +1,5 @@
 //
-//  ConsoleTable <https://github.com/tangwing/PrettyConsoleTable>
+//  TablePrinter <https://github.com/tangwing/PrettyTablePrinter>
 //  A single-header only C++ library for easy (and pretty, for later versions) display 
 //  of tables in console applications.
 //
@@ -8,8 +8,8 @@
 //  This library is released under the WTFPL Licence.
 //  http://www.wtfpl.net/
 //
-#ifndef CONSOLETABLE_H
-#define CONSOLETABLE_H
+#ifndef TABLEPRINTER_H
+#define TABLEPRINTER_H
 
 #include <cassert>
 #include <iostream>
@@ -23,12 +23,12 @@
 using namespace std;
 
 ///@brief Instantiate this class and config it to represente a table, then use Print() to render table units one by one. 
-class ConsoleTable
+class TablePrinter
 {
 public:
 	///@brief The constructor which concern about the title and the structure of the table.
 	///@param filename If not empty, ouput is redirected to a file.
-	ConsoleTable(string title, int lineCount, int colCount, string filename = ""):
+	TablePrinter(string title, int lineCount, int colCount, string filename = ""):
 		Title(title),
 		LineCount(lineCount),
 		ColCount(colCount),
@@ -64,7 +64,7 @@ public:
 
 	///@brief Set a column header. We will decide the width of each column from its header text length.
 	///The other way to set the width of col: @see SetColWidth(int width, int colIndice)
-	ConsoleTable & SetColHeader(unsigned int colIndice, string header)
+	TablePrinter & SetColHeader(unsigned int colIndice, string header)
 	{
 		ColHeaders[colIndice]=(header);
 		ColWidths[colIndice]=(header.size());
@@ -74,7 +74,7 @@ public:
 	///@brief Set the width of a specific column.
 	///@param width The new width value.
 	///@param colIndice The 0-based indice of the column to set, -1 as default standing for all columns
-	ConsoleTable & SetColWidth(unsigned int width, int colIndice = -1)
+	TablePrinter & SetColWidth(unsigned int width, int colIndice = -1)
 	{
 		if(colIndice > -1 && ColWidths.size() > colIndice)
 		{
@@ -89,7 +89,7 @@ public:
 
 	///@brief Render the first empty table unit with the specified value.
 	template <typename T>
-	ConsoleTable & Print(T ele)
+	TablePrinter & Print(T ele)
 	{
 		if(CurrentEleCount == 0)
 		{//Print table header
@@ -125,7 +125,8 @@ public:
 		return * this;
 	}
 
-	///@briet Turn to use plain-old Ascii chars
+	///@briet Turn to use plain-old Ascii chars.
+	///By default the extended Ascii character set is used for better bolder display. This cause some encoding problem when outputing to files because the extended Ascii is not well supported.
 	void EnableExtendedAsciiChar(bool enable)
 	{
 		if(enable)
@@ -151,18 +152,18 @@ public:
 
 	}
 
-	~ConsoleTable()
+	~TablePrinter()
 	{
 		if(pOut != &cout)
 			delete pOut;
 	}
 
 //____________________ Getters & setters ____________________
-	ConsoleTable & SetTitle(string title){Title=(title); return *this;}
-	ConsoleTable & SetHaveLineNumber(bool haveLineNumber){HaveLineNumber=(haveLineNumber); return *this;}
-	ConsoleTable & SetHaveLineDiv(bool haveLineDiv){HaveLineDiv=(haveLineDiv); return *this;}
-	ConsoleTable & SetHaveColNumber(bool haveColNumber){HaveColNumber=(haveColNumber); return *this;}
-	ConsoleTable & SetHaveColDiv(bool haveColDiv){HaveColDiv=(haveColDiv); return *this;}
+	TablePrinter & SetTitle(string title){Title=(title); return *this;}
+	TablePrinter & SetHaveLineNumber(bool haveLineNumber){HaveLineNumber=(haveLineNumber); return *this;}
+	TablePrinter & SetHaveLineDiv(bool haveLineDiv){HaveLineDiv=(haveLineDiv); return *this;}
+	TablePrinter & SetHaveColNumber(bool haveColNumber){HaveColNumber=(haveColNumber); return *this;}
+	TablePrinter & SetHaveColDiv(bool haveColDiv){HaveColDiv=(haveColDiv); return *this;}
 	
 
 //==================== Private zone ====================
@@ -195,10 +196,10 @@ private:
 	vector<string> ColHeaders;
 	vector<int> ColWidths;
 
-	ConsoleTable(ConsoleTable&);
-	ConsoleTable & operator=(ConsoleTable&);
+	TablePrinter(TablePrinter&);
+	TablePrinter & operator=(TablePrinter&);
 
-	ConsoleTable & PrintTableHeader()
+	TablePrinter & PrintTableHeader()
 	{
 		//First of all, compute the table width
 		TableWidth = accumulate(ColWidths.begin(), ColWidths.end(), TableWidth);

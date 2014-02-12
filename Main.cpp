@@ -1,8 +1,8 @@
-#include "ConsoleTable.h"
+#include "TablePrinter.h"
 
 int main()
 {
-	ConsoleTable ct("Test Table", 2,2, "test.txt");
+	TablePrinter ct("Test Table", 2,2, "test.txt");
 	ct.SetColHeader(0, "col1")
 		.SetColHeader(1, "Col2's header is very long")
 		.SetHaveLineDiv(true);

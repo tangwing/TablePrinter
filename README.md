@@ -1,4 +1,4 @@
-PrettyConsoleTable
+TablePrinter
 ==================
 
 A header-only C++ library for better table display in console.
@@ -7,6 +7,8 @@ A header-only C++ library for better table display in console.
 1.Line number
 2.Column header (Column width)
 3.Table header
+4.Support output to file.
+
 Ex:
 <pre>
 +-----------------------------------+  
