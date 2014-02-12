@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=640" />
+
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
+    <title>TablePrinter by tangwing</title>
+  </head>
+
+  <body>
+    <a id="forkme_banner" href="https://github.com/tangwing/PrettyConsoleTable">View on GitHub</a>
+    <div class="shell">
+
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>TablePrinter</h1>
+            <h2>A header-only C++ library for better data table display.</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
+
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/tangwing/PrettyConsoleTable/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/tangwing/PrettyConsoleTable/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
+
+
+      <span class="banner-fix"></span>
+
+
+      <section id="main_content">
+        <h1>
+<a name="tableprinter" class="anchor" href="#tableprinter"><span class="octicon octicon-link"></span></a>TablePrinter</h1>
+
+<p>Feel annoyed when trying to print some organized information in console window or to a file? Here comes TablePrinter!</p>
+
+<h1>
+<a name="features-supported" class="anchor" href="#features-supported"><span class="octicon octicon-link"></span></a>Features supported:</h1>
+
+<p>1.Line number
+2.Column header (Column width)
+3.Table header
+4.Support printing to file.</p>
+
+<p>Ex:</p>
+
+<pre>
++-----------------------------------+  
+|            Test Table             |  
++---+----+--------------------------+  
+|   |col1|Col2's header is very long|  
++---+----+--------------------------+  
+|  0|   3|                       4.6|  
++---+----+--------------------------+  
+|  1|  hi|                         6|  
++-----------------------------------+ 
+</pre>
+
+<h1>
+<a name="features-to-implement" class="anchor" href="#features-to-implement"><span class="octicon octicon-link"></span></a>Features to implement:</h1>
+
+<p>1.Fusioned rows and columns<br>
+2.Color support<br>
+Ex:</p>
+
+<pre>
++---------------------------------------+
+|                Results                |
++---------------------------------------+
+|             |        Contestant       |
++ Competition +-------------------------+
+|             |  John | Andrea | Robert |
++-------------+-------+--------+--------+
+| Swimming    |  1:30 |   2:05 |   1:15 |
++-------------+-------+--------+--------+
+| Running     | 15:30 |  14:10 |  15:45 |
++-------------+-------+--------+--------+
+</pre>
+      </section>
+
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/tangwing">tangwing</a> can be found on <a href="https://github.com/tangwing/PrettyConsoleTable">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
+      </footer>
+
+    </div>
+
+    
+  </body>
+</html>
